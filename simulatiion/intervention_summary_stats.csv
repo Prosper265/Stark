@@ -1,5 +1,0 @@
-country,intervention_type,year_min,year_max,year_count,coverage_percentage_mean,coverage_percentage_median,coverage_percentage_min,coverage_percentage_max,coverage_percentage_std
-Ghana,iron_supplementation,2008,2014,2,19.4,19.4,18.2,20.6,1.7
-Ghana,iron_tablets,2003,2014,3,88.7,86.5,82.9,96.7,7.16
-Malawi,iron_supplementation,2015,2015,1,5.8,5.8,5.8,5.8,
-Malawi,iron_tablets,2010,2015,2,96.3,96.3,94.7,97.9,2.26
