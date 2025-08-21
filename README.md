@@ -1,2 +1,2 @@
 # Stark
-A repository for competition
+A repository for a competition
