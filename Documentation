@@ -1,0 +1,216 @@
+Malawi Food Policy Simulator - Documentation
+1. Overview
+The Malawi Food Policy Simulator is an interactive web application built with Streamlit. It is designed to help policymakers, researchers, and public health officials analyze food consumption patterns, assess nutritional adequacy across districts in Malawi, and simulate the potential impact of various policy interventions.
+
+Core Purpose: To provide a data-driven tool for informed decision-making in nutrition security and food policy.
+
+2. Technical Architecture
+2.1. Technology Stack
+Framework: Streamlit
+
+Programming Language: Python 3.x
+
+Key Libraries:
+
+streamlit: Core framework for building the web UI.
+
+pandas: Data manipulation and analysis.
+
+numpy: Numerical operations.
+
+plotly.express & plotly.graph_objects: Interactive data visualizations.
+
+re, unicodedata: For data preprocessing and string cleaning.
+
+2.2. Project Structure
+text
+your_project_directory/
+├── app.py (or main script) # This is the provided code file
+└── data/
+    └── malawi/ # Required data directory
+        ├── food_composition.csv
+        ├── initial_cons.csv
+        ├── nutrient_adequacy.csv
+        ├── gender_comparison.csv
+        └── simulations.csv
+3. Data Requirements & Loading
+The application relies on five core CSV data files located in the data/malawi/ directory.
+
+3.1. Data Files
+food_composition.csv
+
+Purpose: Contains nutritional information for various food items.
+
+Expected Columns: Food_code, Food_name, and multiple columns for different nutrients (e.g., Protein, Iron, Vitamin_A).
+
+initial_cons.csv
+
+Purpose: Contains food consumption data for different areas.
+
+Expected Columns: Must include Area and Item (food item) and Value (consumption quantity, e.g., kg/capita/year).
+
+nutrient_adequacy.csv
+
+Purpose: Contains nutrient adequacy rates (%) for various districts in Malawi.
+
+Expected Columns: District, and multiple columns for nutrient adequacy (e.g., Iron Adequacy, Zinc Adequacy).
+
+gender_comparison.csv
+
+Purpose: Contains nutrient adequacy data disaggregated by gender for districts.
+
+Expected Columns: District, Category (e.g., 'Male', 'Female'), and columns for various nutrients.
+
+simulations.csv (Optional for full functionality)
+
+Purpose: Contains pre-calculated data on the potential impact of interventions.
+
+Expected Columns: Likely includes country, district, intervention, and impact or adequacy_uplift_points.
+
+3.2. Data Loading Function
+The load_data() function is decorated with @st.cache_data to efficiently load and cache the CSV files, significantly improving performance on subsequent runs.
+
+python
+@st.cache_data
+def load_data():
+    try:
+        food_comp = pd.read_csv(DATA_PATH / "food_composition.csv")
+        consumption = pd.read_csv(DATA_PATH / "initial_cons.csv")
+        adequacy_df = pd.read_csv(DATA_PATH / "nutrient_adequacy.csv")
+        gender_df = pd.read_csv(DATA_PATH / "gender_comparison.csv")
+        simulations_df = pd.read_csv(DATA_PATH / "simulations.csv")
+        return food_comp, consumption, adequacy_df, gender_df, simulations_df
+    except FileNotFoundError as e:
+        st.error(f"Data file not found: {e}")
+        # ... handle error
+4. Application Modules (Pages)
+The app is organized into four main pages, accessible via the sidebar radio buttons.
+
+4.1. Page 1: Overview
+Purpose: Provides a high-level dashboard with key metrics and general insights.
+
+Key Features:
+
+Metrics: Displays the number of tracked food items, analyzed nutrients, and districts.
+
+Top Foods Chart: A bar chart showing the top 10 most consumed food items in Malawi.
+
+Nutritional Composition Explorer: Allows users to select food groups and a specific nutrient to compare their nutritional content.
+
+4.2. Page 2: Nutrition Analysis
+Purpose: Offers a detailed, district-level analysis of nutrient adequacy and deficiencies.
+
+Key Features:
+
+Adequacy by District: A bar chart to visualize the adequacy of a single selected nutrient across all districts.
+
+Deficiency Heatmap: A bar chart summarizing the prevalence of critical nutrient deficiencies across all districts, color-coded by severity.
+
+Nutrient Correlation: An interactive scatter plot to explore the relationship between any two nutrients.
+
+Gender Comparison: (If data is available) A bar chart comparing nutrient adequacy between genders for a selected district and nutrient.
+
+4.3. Page 3: Policy Simulation
+Purpose: Allows users to simulate the effects of hypothetical policy interventions.
+
+Key Features:
+
+Intervention Setup: Users select a target district, intervention type (Supplementation, Fortification, etc.), a target nutrient, and an intensity level.
+
+Simulation Results: Upon running the simulation, the app calculates and displays:
+
+Current and projected adequacy percentages.
+
+The absolute and relative improvement.
+
+A visual comparison bar chart.
+
+Pre-calculated Results: If available, displays pre-calculated intervention impact data for comparison.
+
+4.4. Page 4: Data Explorer
+Purpose: Provides direct access to the underlying datasets for transparency and manual exploration.
+
+Key Features: Simple data tables for all five core datasets, displayed using st.dataframe.
+
+5. Core Functions
+preprocess_data(): Cleans column names and filters consumption data for Malawi only.
+
+standardize_nutrient_name(): Cleans and standardizes nutrient names for consistent processing.
+
+create_nutrient_radar_chart(): (Defined but not fully implemented in UI) Creates a radar chart for nutrient profiles.
+
+create_deficiency_heatmap(): Processes adequacy data to create a summary chart of deficiency rates.
+
+create_interactive_scatter(): Generates a scatter plot for comparing two nutrients.
+
+simulate_intervention(): The core logic for modifying nutrient adequacy values based on user-defined intervention parameters.
+
+create_intervention_comparison(): (Defined but not fully implemented in UI) Designed to compare multiple interventions against a baseline.
+
+6. Installation & Execution
+6.1. Prerequisites
+Python 3.7+
+
+pip (Python package manager)
+
+6.2. Setup Instructions
+Create a virtual environment (recommended):
+
+bash
+python -m venv malawi-env
+source malawi-env/bin/activate  # On Windows: malawi-env\Scripts\activate
+Install required packages:
+
+bash
+pip install streamlit pandas numpy plotly
+Prepare the data:
+
+Create a folder structure: data/malawi/ within your project directory.
+
+Place all required CSV files (food_composition.csv, etc.) into the data/malawi/ folder.
+
+Run the application:
+
+bash
+streamlit run app.py  # Replace 'app.py' with your script's filename
+The application will open in your default web browser.
+
+7. Usage Guide
+Start on the Overview: Get a general sense of the data landscape in Malawi.
+
+Deep Dive in Nutrition Analysis: Identify which nutrients are problematic and in which districts. Use the correlation plot to find potential synergies (e.g., improving Iron might also improve Folate).
+
+Test Policies in the Simulator:
+
+Choose a district of interest.
+
+Select an intervention strategy (e.g., Fortification for a widespread issue, Supplementation for a acute deficiency).
+
+Choose the target nutrient and adjust the intensity slider.
+
+Click "Run Simulation" to see the potential outcome.
+
+Explore Raw Data: Use the Data Explorer page to verify assumptions, see raw numbers, or export data for further analysis.
+
+8. Limitations & Future Enhancements
+Limitations:
+
+The simulation model is simplistic. Real-world efficacy of interventions is more complex.
+
+The app requires all data files to be present and correctly formatted to function fully.
+
+Error handling is basic and could be expanded.
+
+Potential Enhancements:
+
+Incorporate more sophisticated economic or epidemiological models.
+
+Add user authentication to save and compare simulation scenarios.
+
+Include cost-effectiveness analysis for different interventions.
+
+Implement the radar chart and multi-intervention comparison features that are defined but not used in the UI.
+
+Add data export functionality for charts and simulation results.
+
+Disclaimer: This tool is designed for exploratory analysis and planning. The simulation results are illustrative and should be validated with domain experts before informing real-world policy decisions.
